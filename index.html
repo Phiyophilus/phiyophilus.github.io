@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kgothatso &amp; Associates | Fraud &amp; Forensic Investigations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -17,21 +18,33 @@
         }
 
         :root {
-            --primary: #1a3a6c;
-            --secondary: #d4af37;
+            --teal-dark: #004d4d;
+            --teal-medium: #008080;
+            --teal-light: #00b3b3;
+            --teal-accent: #00cccc;
+            --gold: #d4af37;
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
             --dark: #0d1b2a;
-            --light: #f8f9fa;
-            --accent: #c41e3a;
         }
 
         body {
-            background-color: #f0f2f5;
-            color: #333;
-            line-height: 1.6;
+            background: var(--dark);
+            color: var(--white);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
 
         .container {
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
@@ -39,13 +52,18 @@
 
         /* Header Styles */
         header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: white;
-            padding: 15px 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            width: 100%;
             z-index: 1000;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px 0;
+            transition: all 0.4s ease;
+        }
+
+        header.scrolled {
+            background: rgba(0, 30, 30, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .header-content {
@@ -61,18 +79,22 @@
 
         .logo i {
             font-size: 2.5rem;
-            color: var(--secondary);
+            color: var(--teal-accent);
             margin-right: 15px;
         }
 
         .logo-text h1 {
             font-size: 1.8rem;
             margin-bottom: 5px;
+            background: linear-gradient(to right, var(--teal-light), var(--teal-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .logo-text p {
             font-size: 0.9rem;
             opacity: 0.9;
+            color: var(--teal-light);
         }
 
         nav ul {
@@ -85,34 +107,33 @@
         }
 
         nav ul li a {
-            color: white;
+            color: var(--teal-light);
             text-decoration: none;
             font-weight: 500;
             font-size: 1.1rem;
-            transition: color 0.3s;
+            transition: all 0.3s;
             padding: 8px 12px;
             border-radius: 4px;
         }
 
         nav ul li a:hover {
-            color: var(--secondary);
-            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold);
+            background: rgba(0, 150, 150, 0.2);
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(13, 27, 42, 0.85), rgba(13, 27, 42, 0.9)), url('https://images.unsplash.com/photo-1589391886645-d51941baf7fb?ixlib=rb-4.0.3') no-repeat center center/cover;
-            height: 80vh;
+            height: 100vh;
             display: flex;
             align-items: center;
-            text-align: center;
-            color: white;
-            padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
         .hero-content {
             max-width: 800px;
-            margin: 0 auto;
+            z-index: 10;
+            padding-top: 80px;
         }
 
         .hero h2 {
@@ -120,18 +141,24 @@
             margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            background: linear-gradient(to right, var(--white), var(--teal-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
         }
 
         .hero p {
             font-size: 1.4rem;
             margin-bottom: 30px;
             opacity: 0.9;
+            max-width: 700px;
+            color: var(--teal-light);
         }
 
         .btn {
             display: inline-block;
-            background: var(--secondary);
-            color: var(--dark);
+            background: linear-gradient(45deg, var(--teal-medium), var(--teal-accent));
+            color: var(--white);
             padding: 15px 35px;
             border-radius: 30px;
             text-decoration: none;
@@ -140,19 +167,21 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
-            border: 2px solid var(--secondary);
+            border: 2px solid var(--teal-accent);
+            box-shadow: 0 5px 15px rgba(0, 150, 150, 0.3);
         }
 
         .btn:hover {
             background: transparent;
-            color: var(--secondary);
+            color: var(--teal-accent);
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 150, 150, 0.4);
         }
 
         /* Services Section */
         .section {
-            padding: 80px 0;
+            padding: 100px 0;
+            position: relative;
         }
 
         .section-title {
@@ -162,10 +191,10 @@
 
         .section-title h2 {
             font-size: 2.5rem;
-            color: var(--primary);
             margin-bottom: 15px;
             position: relative;
             display: inline-block;
+            color: var(--teal-light);
         }
 
         .section-title h2::after {
@@ -176,14 +205,15 @@
             transform: translateX(-50%);
             width: 80px;
             height: 4px;
-            background: var(--secondary);
+            background: var(--gold);
         }
 
         .section-title p {
             font-size: 1.2rem;
-            color: #666;
             max-width: 700px;
             margin: 20px auto 0;
+            color: var(--teal-light);
+            opacity: 0.9;
         }
 
         .services-grid {
@@ -193,20 +223,23 @@
         }
 
         .service-card {
-            background: white;
+            background: rgba(0, 40, 40, 0.7);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 150, 150, 0.3);
         }
 
         .service-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--teal-accent);
         }
 
         .service-icon {
-            background: var(--primary);
+            background: linear-gradient(45deg, var(--teal-dark), var(--teal-medium));
             height: 80px;
             display: flex;
             align-items: center;
@@ -215,7 +248,7 @@
 
         .service-icon i {
             font-size: 2.5rem;
-            color: var(--secondary);
+            color: var(--gold);
         }
 
         .service-content {
@@ -223,14 +256,14 @@
         }
 
         .service-content h3 {
-            color: var(--primary);
+            color: var(--teal-accent);
             margin-bottom: 15px;
             font-size: 1.5rem;
         }
 
         /* About Section */
         .about {
-            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            background: rgba(0, 20, 20, 0.6);
         }
 
         .about-content {
@@ -243,25 +276,43 @@
         .about-image {
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--teal-medium), var(--teal-accent));
+            opacity: 0.2;
         }
 
         .about-image img {
             width: 100%;
             height: auto;
             display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
         }
 
         .about-text h3 {
             font-size: 2rem;
-            color: var(--primary);
             margin-bottom: 20px;
+            color: var(--teal-accent);
         }
 
         .about-text p {
             margin-bottom: 20px;
             font-size: 1.1rem;
             line-height: 1.8;
+            color: var(--teal-light);
         }
 
         .stats {
@@ -274,36 +325,28 @@
         .stat-item {
             text-align: center;
             padding: 20px;
-            background: white;
+            background: rgba(0, 40, 40, 0.5);
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 150, 150, 0.2);
         }
 
         .stat-item i {
             font-size: 2.5rem;
-            color: var(--secondary);
+            color: var(--gold);
             margin-bottom: 15px;
         }
 
         .stat-item .number {
             font-size: 2rem;
             font-weight: bold;
-            color: var(--primary);
+            color: var(--teal-accent);
             margin-bottom: 5px;
         }
 
         /* Contact Section */
         .contact {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: white;
-        }
-
-        .contact .section-title h2 {
-            color: white;
-        }
-
-        .contact .section-title p {
-            color: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 20, 20, 0.7);
         }
 
         .contact-container {
@@ -315,6 +358,7 @@
         .contact-info h3 {
             font-size: 1.8rem;
             margin-bottom: 25px;
+            color: var(--teal-accent);
         }
 
         .contact-details {
@@ -328,7 +372,7 @@
 
         .contact-item i {
             font-size: 1.5rem;
-            color: var(--secondary);
+            color: var(--teal-accent);
             margin-right: 15px;
             min-width: 30px;
         }
@@ -341,9 +385,11 @@
         .contact-form textarea {
             width: 100%;
             padding: 15px;
-            border: none;
+            border: 1px solid rgba(0, 150, 150, 0.3);
             border-radius: 5px;
             font-size: 1rem;
+            background: rgba(0, 30, 30, 0.7);
+            color: var(--teal-light);
         }
 
         .contact-form textarea {
@@ -351,11 +397,18 @@
             resize: vertical;
         }
 
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--teal-accent);
+            box-shadow: 0 0 10px rgba(0, 200, 200, 0.3);
+        }
+
         /* Footer */
         footer {
-            background: var(--dark);
-            color: white;
+            background: rgba(0, 15, 15, 0.9);
             padding: 50px 0 20px;
+            border-top: 1px solid rgba(0, 150, 150, 0.2);
         }
 
         .footer-content {
@@ -368,7 +421,7 @@
         .footer-column h3 {
             font-size: 1.5rem;
             margin-bottom: 20px;
-            color: var(--secondary);
+            color: var(--teal-accent);
             position: relative;
             padding-bottom: 10px;
         }
@@ -380,13 +433,14 @@
             left: 0;
             width: 50px;
             height: 3px;
-            background: var(--secondary);
+            background: var(--gold);
         }
 
         .footer-column p,
         .footer-column li {
             margin-bottom: 15px;
             opacity: 0.8;
+            color: var(--teal-light);
         }
 
         .footer-column ul {
@@ -394,13 +448,13 @@
         }
 
         .footer-column ul li a {
-            color: white;
+            color: var(--teal-light);
             text-decoration: none;
             transition: color 0.3s;
         }
 
         .footer-column ul li a:hover {
-            color: var(--secondary);
+            color: var(--gold);
             padding-left: 5px;
         }
 
@@ -416,22 +470,25 @@
             justify-content: center;
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 100, 100, 0.3);
             border-radius: 50%;
-            color: white;
+            color: var(--teal-light);
             transition: all 0.3s;
+            border: 1px solid rgba(0, 150, 150, 0.3);
         }
 
         .social-links a:hover {
-            background: var(--secondary);
+            background: var(--teal-accent);
             transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 200, 200, 0.3);
         }
 
         .copyright {
             text-align: center;
             padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(0, 150, 150, 0.1);
             opacity: 0.7;
+            color: var(--teal-light);
         }
 
         /* Responsive Design */
@@ -444,6 +501,10 @@
             .about-image {
                 max-width: 80%;
                 margin: 0 auto;
+            }
+            
+            .hero h2 {
+                font-size: 2.8rem;
             }
         }
 
@@ -464,32 +525,43 @@
             }
             
             .hero h2 {
-                font-size: 2.5rem;
+                font-size: 2.3rem;
             }
             
             .hero p {
                 font-size: 1.1rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .section {
-                padding: 50px 0;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
             }
             
             .stats {
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 576px) {
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .hero {
+                text-align: center;
+            }
+            
+            .hero-content {
+                padding: 0 15px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- 3D Background Canvas -->
+    <canvas id="background-canvas"></canvas>
+
     <!-- Header -->
-    <header>
+    <header id="header">
         <div class="container header-content">
             <div class="logo">
                 <i class="fas fa-search-dollar"></i>
@@ -511,7 +583,7 @@
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <div class="hero-content">
+        <div class="container hero-content">
             <h2>Protecting Your Assets Through Expert Investigation</h2>
             <p>Professional fraud detection and forensic services with proven results</p>
             <a href="#contact" class="btn">Request Investigation</a>
@@ -632,14 +704,14 @@
                             <i class="fas fa-map-marker-alt"></i>
                             <div>
                                 <h4>Office Location</h4>
-                                <p>123 Justice Avenue, Sandton, Johannesburg, South Africa</p>
+                                <p>Blue Valley Golf Estate, Pretoria, 0147</p>
                             </div>
                         </div>
                         <div class="contact-item">
                             <i class="fas fa-phone"></i>
                             <div>
                                 <h4>Phone Number</h4>
-                                <p>+27 11 123 4567</p>
+                                <p>+2779 097 6866</p>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -731,6 +803,110 @@
     </footer>
 
     <script>
+        // Initialize Three.js for 3D background
+        let scene, camera, renderer, particles;
+        
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('background-canvas'),
+                alpha: true,
+                antialias: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            
+            // Create particles
+            const particleCount = 2000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            // Generate particle positions and colors
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                // Positions
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+                
+                // Colors (teal gradient)
+                colors[i] = 0; // R
+                colors[i + 1] = 0.5 + Math.random() * 0.5; // G
+                colors[i + 2] = 0.5 + Math.random() * 0.5; // B
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            // Create material
+            const material = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            // Create particle system
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0x00cccc, 0.5);
+            scene.add(ambientLight);
+            
+            // Add directional light
+            const directionalLight = new THREE.DirectionalLight(0x00ffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize, false);
+            
+            // Start animation
+            animate();
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Rotate particles
+            particles.rotation.x += 0.001;
+            particles.rotation.y += 0.002;
+            
+            // Move particles in a wave pattern
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 1] += Math.sin(Date.now() * 0.001 + positions[i] * 0.5) * 0.005;
+                positions[i + 2] += Math.cos(Date.now() * 0.001 + positions[i + 1] * 0.5) * 0.005;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -740,46 +916,16 @@
                 });
             });
         });
-
+        
         // Form submission handling
         document.getElementById('investigationForm').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('Thank you for your submission. Our team will contact you within 24 hours.');
             this.reset();
         });
-
-        // Simple counter animation for stats
-        document.addEventListener('DOMContentLoaded', function() {
-            const counters = document.querySelectorAll('.number');
-            const speed = 200;
-            
-            counters.forEach(counter => {
-                const updateCount = () => {
-                    const target = +counter.getAttribute('data-target');
-                    const count = +counter.innerText;
-                    
-                    const inc = target / speed;
-                    
-                    if (count < target) {
-                        counter.innerText = Math.ceil(count + inc);
-                        setTimeout(updateCount, 1);
-                    } else {
-                        counter.innerText = target;
-                    }
-                };
-                
-                // Set data-target attribute for each counter
-                if(counter.innerText === '13+') {
-                    counter.setAttribute('data-target', 13);
-                } else if(counter.innerText === '850+') {
-                    counter.setAttribute('data-target', 850);
-                } else if(counter.innerText === '98%') {
-                    counter.setAttribute('data-target', 98);
-                }
-                
-                updateCount();
-            });
-        });
+        
+        // Initialize the 3D background
+        window.onload = init;
     </script>
 
 </body></html>
